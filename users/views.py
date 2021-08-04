@@ -16,6 +16,7 @@ def email_validation(email):
 def password_validation(password):
         p = re.compile('^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$')
         return not p.match(password)
+
         
 class UserView(View):
     def post(self, request):
@@ -40,18 +41,18 @@ class UserView(View):
             if User.objects.filter(nickname=data['nickname']).exists():
                 return JsonResponse({'MESSAGE' : 'DUPLICATED NICKNAME'}, status = 400)
                 
-            hashed_password = bcrypt.hashpw (data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            
+            hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             User.objects.create(
                 username     = data['username'],
                 name          = data['name'],
-                nickname      = data['nicknmae'],
+                nickname      = data['nickname'],
                 phone_number  = data['phone_number'],
                 password      = hashed_password,
                 email         = data['email'],
                 address       = data['address'],
             )
-            
+
             return JsonResponse({"MESSAGE" : "SUCCESS"}, status = 201)
         except KeyError:
             return JsonResponse({"MESSAGE" : "KEY_ERROR"}, status = 400)
@@ -70,7 +71,7 @@ class SigninView(View):
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'MESSAGE':'INVALID_USER'}, status=401)
                 
-            access_token = jwt.encode({'id' : user.id}, SECRET_KEY, algorithm = 'HS256').decode()
+            access_token = jwt.encode({'id' : user.id}, SECRET_KEY, algorithm = 'HS256')
             return JsonResponse({'MESSAGE':'SUCCESS', 'TOKEN': access_token },status=200)
         except KeyError:
             return JsonResponse({"MESSAGE" : "KEY_ERROR"}, status=400)
