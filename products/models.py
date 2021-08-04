@@ -4,15 +4,15 @@ from django.db import models
 class Category(models.Model):
     name        = models.CharField(max_length=45)
     description = models.CharField(max_length=200)
-    image_url   = models.CharField(max_length=500)
+    image_url   = models.CharField(max_length=2000)
 
     class Meta:
         db_table = 'categories'
 
-class Sub_category(models.Model):
+class SubCategory(models.Model):
     name        = models.CharField(max_length=45)
     description = models.CharField(max_length=200)
-    image_url   = models.CharField(max_length=500)
+    image_url   = models.CharField(max_length=2000)
     category    = models.ForeignKey('Category', on_delete = models.CASCADE)
 
     class Meta:
@@ -20,8 +20,8 @@ class Sub_category(models.Model):
 
 class Product(models.Model):
     name                = models.CharField(max_length=45)
-    thumbnail_image_url = models.CharField(max_length=500)
-    sub_category        = models.ForeignKey('Sub_category', on_delete = models.CASCADE)
+    thumbnail_image_url = models.CharField(max_length=2000)
+    sub_category        = models.ForeignKey('SubCategory', on_delete = models.PROTECT)
     tags                = models.ManyToManyField('Tag', related_name = 'products')
 
     class Meta:
@@ -35,9 +35,9 @@ class Option(models.Model):
     class Meta:
         db_table = 'options'
 
-class Product_detail_image(models.Model):
+class ProductDetailImage(models.Model):
     product   = models.ForeignKey('Product', on_delete = models.CASCADE)
-    image_url = models.CharField(max_length=500)
+    image_url = models.CharField(max_length=2000)
 
     class Meta:
         db_table = 'product_detail_images'
