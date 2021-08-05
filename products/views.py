@@ -72,7 +72,7 @@ class ProductsView(View):
         if tag_name:
             if not Tag.objects.filter(name=tag_name).exists():
                 return JsonResponse({"MESSAGE":"NOT_FOUND_TAG"}, status=404)
-            products = Product.objects.filter(tags__name=tag_name)[:6]
+            products = Product.objects.filter(tags__name=tag_name)
         
         products_lst = []
         if sort:
