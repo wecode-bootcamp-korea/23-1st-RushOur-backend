@@ -4,7 +4,7 @@ from django.views     import View
 from django.http      import JsonResponse
 from django.db.models import Min
 
-from products.models import Category, SubCategory, Product, Tag
+from products.models  import Category, SubCategory, Product, Tag
 
 class NavigatorView(View):
     def get(self, request):
@@ -54,10 +54,10 @@ class SubCategoryView(View):
 
 class ProductsView(View):
     def get(self, request):
-        category_id = request.GET.get('category')
+        category_id    = request.GET.get('category')
         subcategory_id = request.GET.get('subcategory')
-        tag_name = request.GET.get('tag')
-        sort = request.GET.get('sort')
+        tag_name       = request.GET.get('tag')
+        sort           = request.GET.get('sort')
 
         if category_id:
             if not Category.objects.filter(id=category_id).exists():
@@ -72,7 +72,7 @@ class ProductsView(View):
         if tag_name:
             if not Tag.objects.filter(name=tag_name).exists():
                 return JsonResponse({"MESSAGE":"NOT_FOUND_TAG"}, status=404)
-            products = Product.objects.filter(tags__name=tag_name)
+            products = Product.objects.filter(tags__name=tag_name)[:6]
         
         products_lst = []
         if sort:
