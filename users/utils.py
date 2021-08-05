@@ -1,5 +1,4 @@
 import jwt
-
 from django.http.response import JsonResponse
 
 from rushour.settings     import SECRET_KEY
