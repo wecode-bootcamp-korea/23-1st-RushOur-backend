@@ -30,16 +30,19 @@ class UserView(View):
                 return JsonResponse({"MESSAGE":"INVALID_PASSWORD"}, status=400)
                 
             if User.objects.filter(email=data['email']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED EMAIL'}, status=400)
+                return JsonResponse({'MESSAGE' : 'EMAIL_ALREADY_EXISTS'}, status=400)
+
+            if User.objects.filter(username=data['username']).exists():
+                return JsonResponse({'MESSAGE' : 'USERNAME_ALREADY_EXISTS'}, status=400)
                 
             if User.objects.filter(phone_number=data['phone_number']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED PHONE_NUM'}, status=400)
+                return JsonResponse({'MESSAGE' : 'PHONE_NUMBER_ALREADY_EXISTS'}, status=400)
                 
             if User.objects.filter(name=data['name']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED NAME'}, status=400)
+                return JsonResponse({'MESSAGE' : 'NAME_ALREADY_EXISTS'}, status=400)
                 
             if User.objects.filter(nickname=data['nickname']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED NICKNAME'}, status = 400)
+                return JsonResponse({'MESSAGE' : 'NICKNAME_ALREADY_EXISTS'}, status = 400)
                 
             hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
@@ -63,10 +66,10 @@ class SigninView(View):
             data     = json.loads(request.body)
             password = data['password']
             
-            if not User.objects.filter(email=data['email']).exists():
+            if not User.objects.filter(username=data['username']).exists():
                 return JsonResponse({"MESSAGE" : "INVALID_USER"}, status=401)
                 
-            user = User.objects.get(email=data['email'])
+            user = User.objects.get(username=data['username'])
             
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'MESSAGE':'INVALID_USER'}, status=401)
