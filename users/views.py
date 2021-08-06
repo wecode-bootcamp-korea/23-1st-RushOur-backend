@@ -31,6 +31,9 @@ class UserView(View):
                 
             if User.objects.filter(email=data['email']).exists():
                 return JsonResponse({'MESSAGE' : 'DUPLICATED EMAIL'}, status=400)
+
+            if User.objects.filter(username=data['username']).exists():
+                return JsonResponse({'MESSAGE' : 'DUPLICATED_USERNAME'}, status=400)
                 
             if User.objects.filter(phone_number=data['phone_number']).exists():
                 return JsonResponse({'MESSAGE' : 'DUPLICATED PHONE_NUM'}, status=400)
