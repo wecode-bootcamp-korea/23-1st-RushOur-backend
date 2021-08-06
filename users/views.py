@@ -30,19 +30,19 @@ class UserView(View):
                 return JsonResponse({"MESSAGE":"INVALID_PASSWORD"}, status=400)
                 
             if User.objects.filter(email=data['email']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED EMAIL'}, status=400)
+                return JsonResponse({'MESSAGE' : 'EMAIL_ALREADY_EXISTS'}, status=400)
 
             if User.objects.filter(username=data['username']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED_USERNAME'}, status=400)
+                return JsonResponse({'MESSAGE' : 'USERNAME_ALREADY_EXISTS'}, status=400)
                 
             if User.objects.filter(phone_number=data['phone_number']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED PHONE_NUM'}, status=400)
+                return JsonResponse({'MESSAGE' : 'PHONE_NUMBER_ALREADY_EXISTS'}, status=400)
                 
             if User.objects.filter(name=data['name']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED NAME'}, status=400)
+                return JsonResponse({'MESSAGE' : 'NAME_ALREADY_EXISTS'}, status=400)
                 
             if User.objects.filter(nickname=data['nickname']).exists():
-                return JsonResponse({'MESSAGE' : 'DUPLICATED NICKNAME'}, status = 400)
+                return JsonResponse({'MESSAGE' : 'NICKNAME_ALREADY_EXISTS'}, status = 400)
                 
             hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
