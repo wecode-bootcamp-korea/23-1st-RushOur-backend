@@ -4,17 +4,19 @@ from django.views     import View
 from django.http      import JsonResponse
 from django.db.models import Min
 
-from products.models  import Category, SubCategory
+from products.models  import Category, SubCategory, Product
 
 class NavigatorView(View):
     def get(self, request):
         categories = Category.objects.all()
         navigator_lst = [{
-                'category_id'  : category.id,
-                'name': category.name,
+                'category_id'   : category.id,
+                'name'          : category.name,
+                'products_count': Product.objects.filter(sub_category__category=category).count(),
                 'subcategories' : [{
-                    'subcategory_id'   : subcategory.id,
-                    'name' : subcategory.name
+                    'subcategory_id': subcategory.id,
+                    'name'          : subcategory.name,
+                    'products_count': subcategory.product_set.count()
                 } for subcategory in category.subcategory_set.all()],
             } for category in categories ]
         return JsonResponse({"navigators":navigator_lst}, status=200)
