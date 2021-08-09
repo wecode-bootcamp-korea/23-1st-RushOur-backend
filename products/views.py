@@ -1,10 +1,47 @@
 import json
 
-from django.views     import View
-from django.http      import JsonResponse
-from django.db.models import Min
+from django.views    import View
+from django.http     import JsonResponse
 
-from products.models  import Category, SubCategory, Product
+from products.models  import Category, SubCategory, Product, Tag
+from django.db.models import Min, Q
+
+class ProductsView(View):
+    def get(self, request):
+        category_id    = request.GET.get('category') 
+        subcategory_id = request.GET.get('subcategory')
+        tags           = request.GET.getlist('tag')
+        sort           = request.GET.get('sort')
+
+        product_filter = Q()
+        
+        sort_by = {
+            'name'      : 'name',
+            'low_price' : 'price',
+            'high_price': '-price'
+        }
+        
+        if category_id:
+            product_filter.add(Q(sub_category__category=category_id), Q.AND)
+
+        if subcategory_id:
+            product_filter.add(Q(sub_category=subcategory_id), Q.AND)
+             
+        products = Product.objects.filter(product_filter).annotate(price=Min('option__price')).order_by(sort_by.get(sort, "name"))
+        
+        if tags:
+            for tag in tags:
+                products = products.filter(tags__name=tag)
+
+        products_lst = [{
+                'id'        : product.id,
+                'name'      : product.name,
+                'price'     : product.price,
+                'thumbnail' : product.thumbnail_image_url,
+                'tags'      : [tag.name for tag in product.tags.all()]
+            } for product in products]
+
+        return JsonResponse({'products':products_lst}, status=200)
 
 class NavigatorView(View):
     def get(self, request):
@@ -47,3 +84,12 @@ class SubCategoryView(View):
             'description': subcategory.description
         }
         return JsonResponse({'subcategory':sub_category_des}, status=200)
+
+class SubCategoriesView(View):
+    def get(self, request):           
+        subcategories = [{
+            'name' : subcategory.name,
+            'image_url' : subcategory.image_url,
+            'description' : subcategory.description
+            } for subcategory in SubCategory.objects.all()]
+        return JsonResponse({"subcategories":subcategories}, status=200)
