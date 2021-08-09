@@ -4,19 +4,15 @@ from django.views     import View
 from django.http      import JsonResponse
 from django.db.models import Min
 
-from products.models  import Category, SubCategory, Product, ProductDetailImage
+from products.models  import Category, SubCategory, Product
 
-class ProductDetailView(View):
+class ProductView(View):
     def get(self, request, product_id):
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({"MESSAGE":"INVALID_ID"}, status=404)
 
-        categories    = Category.objects.all()
-        subcategories = SubCategory.objects.all()
         product       = Product.objects.get(id=product_id)
-        detail_page = {
-            'categories'   : [category.name for category in categories],
-            'subcategories': [subcategory.name for subcategory in subcategories],
+        product_data = {
             'id'           : product.id,
             'name'         : product.name,
             'thumbnail'    : product.thumbnail_image_url,
@@ -25,9 +21,9 @@ class ProductDetailView(View):
                 'price' : option.price
                                 } for option in product.option_set.all()],
             'tags'         : [tag.name for tag in product.tags.all()],
-            'detail_img'   : ProductDetailImage.objects.get(product=product).image_url
+            'detail_img'   : [image.image_url for image in product.productdetailimage_set.all()]
         }
-        return JsonResponse({"detail_page":detail_page}, status=200)
+        return JsonResponse({"data":product_data}, status=200)
 
 class NavigatorView(View):
     def get(self, request):
