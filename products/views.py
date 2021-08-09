@@ -36,7 +36,7 @@ class ProductsView(View):
                 'price'     : product.price,
                 'thumbnail' : product.thumbnail_image_url,
                 'tags'      : [tag.name for tag in product.tags.all()]
-            }for product in products]
+            } for product in products]
 
         return JsonResponse({'products':products_lst}, status=200)
 
@@ -82,3 +82,11 @@ class SubCategoryView(View):
         }
         return JsonResponse({'subcategory':sub_category_des}, status=200)
 
+class SubCategoriesView(View):
+    def get(self, request):           
+        subcategories = [{
+            'name' : subcategory.name,
+            'image_url' : subcategory.image_url,
+            'description' : subcategory.description
+            } for subcategory in SubCategory.objects.all()]
+        return JsonResponse({"subcategories":subcategories}, status=200)
