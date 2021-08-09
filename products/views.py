@@ -15,20 +15,23 @@ class ProductsView(View):
 
         product_filter = Q()
         
+        sort_by = {
+            'name'      : 'name',
+            'low_price' : 'price',
+            'high_price': '-price'
+        }
+        
         if category_id:
             product_filter.add(Q(sub_category__category=category_id), Q.AND)
 
         if subcategory_id:
             product_filter.add(Q(sub_category=subcategory_id), Q.AND)
              
-        products = Product.objects.filter(product_filter).annotate(price=Min('option__price')).order_by('name')
+        products = Product.objects.filter(product_filter).annotate(price=Min('option__price')).order_by(sort_by.get(sort, "name"))
         
         if tags:
             for tag in tags:
                 products = products.filter(tags__name=tag)
-
-        if sort:
-            products = products.order_by(sort)
 
         products_lst = [{
                 'id'        : product.id,
