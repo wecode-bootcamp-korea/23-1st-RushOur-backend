@@ -18,23 +18,19 @@ class CartsView(View):
             quantity   = int(data['quantity'])
 
             option = Option.objects.get(id=option_id)
+
             if option.product_id != product_id:
                 return JsonResponse({"message":"INVALID_OPTION"}, status=404)
 
-            if Cart.objects.filter(user=user, option_id=option_id, product_id=product_id).exists():
-                item = Cart.objects.get(
-                    user       = user,
-                    product_id = product_id,
-                    option_id  = option_id)
-                item.quantity += quantity
-                item.save()
-                return JsonResponse({"message":"SUCCESS"}, status=200)
-
-            Cart.objects.create(
+            cart, created = Cart.objects.get_or_create(
                 user       = user,
                 product_id = product_id,
-                quantity   = quantity,
-                option_id  = option_id)
+                option_id  = option_id,
+                defaluts = {
+                    'quantity' : 0
+                })
+            cart.quantity += quantity
+            cart.save()
             return JsonResponse({"message":"SUCCESS"}, status=201)
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
