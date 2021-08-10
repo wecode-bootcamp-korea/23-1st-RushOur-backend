@@ -3,8 +3,9 @@ import json
 from django.views import View
 from django.http  import JsonResponse
 
-from carts.models import Cart
-from users.utils  import login_required
+from carts.models    import Cart
+from products.models import Option
+from users.utils     import login_required
 
 class CartsView(View):
     @login_required
@@ -15,6 +16,10 @@ class CartsView(View):
             product_id = data['product_id']
             option_id  = data['option_id']
             quantity   = int(data['quantity'])
+
+            option = Option.objects.get(id=option_id)
+            if option.product_id != product_id:
+                return JsonResponse({"message":"INVALID_OPTION"}, status=404)
 
             if Cart.objects.filter(user=user, option_id=option_id, product_id=product_id).exists():
                 item = Cart.objects.get(
