@@ -6,7 +6,7 @@ from django.http  import JsonResponse
 from carts.models import Cart
 from users.utils  import login_required
 
-class CartView(View):
+class CartsView(View):
     @login_required
     def post(self, request):
         try:
