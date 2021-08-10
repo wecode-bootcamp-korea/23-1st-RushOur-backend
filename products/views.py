@@ -12,6 +12,8 @@ class ProductsView(View):
         subcategory_id = request.GET.get('subcategory')
         tags           = request.GET.getlist('tag')
         sort           = request.GET.get('sort')
+        limit          = int(request.GET.get('limit', 0))
+        offset         = int(request.GET.get('offset', 0))
 
         product_filter = Q()
         
@@ -32,6 +34,9 @@ class ProductsView(View):
         if tags:
             for tag in tags:
                 products = products.filter(tags__name=tag)
+
+        if limit:
+            products = products[offset:limit]
 
         products_lst = [{
                 'id'        : product.id,
