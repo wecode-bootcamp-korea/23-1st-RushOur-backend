@@ -16,8 +16,6 @@ class CartView(View):
             item.save()
             return JsonResponse({
                 "message"  : "SUCCESS", 
-                "QUANTITY" : item.quantity, 
-                "PRICE"    : item.option.price * int(item.quantity)}, status=201)
-
+                "QUANTITY" : item.quantity}, status = 201)
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
