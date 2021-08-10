@@ -48,7 +48,7 @@ class ProductView(View):
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({"MESSAGE":"INVALID_ID"}, status=404)
 
-        product       = Product.objects.get(id=product_id)
+        product      = Product.objects.get(id=product_id)
         product_data = {
             'id'           : product.id,
             'name'         : product.name,
@@ -56,7 +56,7 @@ class ProductView(View):
             'options'      : [{
                 'size'  : option.size,
                 'price' : option.price
-                                } for option in product.option_set.all()],
+            } for option in product.option_set.all()],
             'tags'         : [tag.name for tag in product.tags.all()],
             'detail_img'   : [image.image_url for image in product.productdetailimage_set.all()]
         }
@@ -84,6 +84,7 @@ class CategoryView(View):
 
         category = Category.objects.get(id=category_id)
         category_des = {
+            'id'         : category.id,
             'name'       : category.name,
             'image_url'  : category.image_url,
             'description': category.description
@@ -98,6 +99,7 @@ class SubCategoryView(View):
 
         subcategory = SubCategory.objects.get(id=subcategory_id)
         sub_category_des = {
+            'id'         : subcategory.id,
             'name'       : subcategory.name,
             'image_url'  : subcategory.image_url,
             'description': subcategory.description
@@ -107,8 +109,9 @@ class SubCategoryView(View):
 class SubCategoriesView(View):
     def get(self, request):           
         subcategories = [{
-            'name' : subcategory.name,
-            'image_url' : subcategory.image_url,
-            'description' : subcategory.description
+            'id'         : subcategory.id,
+            'name'       : subcategory.name,
+            'image_url'  : subcategory.image_url,
+            'description': subcategory.description
             } for subcategory in SubCategory.objects.all()]
         return JsonResponse({"subcategories":subcategories}, status=200)
