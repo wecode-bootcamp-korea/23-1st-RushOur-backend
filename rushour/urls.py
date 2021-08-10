@@ -24,4 +24,5 @@ urlpatterns = [
     path('category/<int:category_id>', CategoryView.as_view()),
     path('subcategory/<int:subcategory_id>', SubCategoryView.as_view()),
     path('subcategory', SubCategoriesView.as_view()),
+    path('wishlists',include('wishlists.urls'))
 ]

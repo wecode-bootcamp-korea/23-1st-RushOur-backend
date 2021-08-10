@@ -1,6 +1,6 @@
 from django.urls import path
-from wishlists.models import User,Product, Wishlist
+from wishlists.views import WishlistView
 
 urlpatterns = [ 
-	path ('/like', Wishlist.as_view())
+	path ('/like', WishlistView.as_view())
 ] 
