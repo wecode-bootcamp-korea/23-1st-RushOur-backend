@@ -14,6 +14,7 @@ class ProductsView(View):
         sort           = request.GET.get('sort')
         limit          = int(request.GET.get('limit', 0))
         offset         = int(request.GET.get('offset', 0))
+        page           = int(request.GET.get('page', 0))
 
         product_filter = Q()
         
@@ -35,7 +36,11 @@ class ProductsView(View):
             for tag in tags:
                 products = products.filter(tags__name=tag)
 
-        if limit:
+        if page:
+            limit  = page * 16
+            offset = limit - 16
+            products = products[offset:limit]
+        elif limit:
             products = products[offset:limit]
 
         products_lst = [{
