@@ -13,5 +13,5 @@ class BannersView(View):
             "image_url": banner.image_url
             } for banner in banners]
 
-        return JsonResponse({'Banners':data}, status=200)
+        return JsonResponse({'banners':data}, status=200)
 
