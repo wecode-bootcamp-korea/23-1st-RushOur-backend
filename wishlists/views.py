@@ -5,7 +5,7 @@ from wishlists.models import Wishlist
 
 from django.http            import JsonResponse
 from django.views           import View
-from django.db.models       import Q
+from django.db.models       import Q, Min
 from products.models        import (Category,SubCategory,Product,Option,ProductDetailImage,Tag,)
 from users.utils             import login_required 
 from users.models            import User
@@ -16,13 +16,14 @@ class WishlistView(View):
     def get(self, request):
         try:
             user=User.objects.get(id=request.user.id)
-            like_list      = user.wishlist_set.all()
+            like_list      = user.wishlist_set.all().annotate(price=Min("product__option__price"))
             
             like_items = [{
-            'product_id'  : product.id,
-            'name'        : product.name, 
-
-        }for product in like_list]
+            'product_id'  : like.product.id,
+            'name'        : like.product.name,
+            'image'       : like.product.thumbnail_image_url,
+            'price'       : like.price
+            }for like in like_list]
         except KeyError:
             return JsonResponse({'Message' : 'KEY_ERROR'}, status = 400)
         return JsonResponse({'Like_Items' : like_items}, status = 200)
