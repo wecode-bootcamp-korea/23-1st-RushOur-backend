@@ -19,10 +19,10 @@ class WishlistView(View):
             like_list      = user.wishlist_set.all().annotate(price=Min("product__option__price"))
             
             like_items = [{
-            'product_id'  : like.product.id,
-            'name'        : like.product.name,
-            'image'       : like.product.thumbnail_image_url,
-            'price'       : like.price
+            'product_id'   : like.product.id,
+            'product_name' : like.product.name,
+            'image'        : like.product.thumbnail_image_url,
+            'price'        : like.price
             }for like in like_list]
         except KeyError:
             return JsonResponse({'Message' : 'KEY_ERROR'}, status = 400)
