@@ -20,7 +20,7 @@ class WishlistView(View):
             
             like_items = [{
             'product_id'   : like.product.id,
-            'product_name' : like.product.name,
+            'name'         : like.product.name,
             'image'        : like.product.thumbnail_image_url,
             'price'        : like.price
             }for like in like_list]
