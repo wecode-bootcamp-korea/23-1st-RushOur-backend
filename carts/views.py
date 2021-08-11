@@ -1,8 +1,9 @@
 import json
 
-from django.views     import View
-from django.http      import JsonResponse
-from django.db.models import Sum, F
+from django.views               import View
+from django.http                import JsonResponse
+from django.db.models           import Sum, F
+from django.db.models.functions import Coalesce
 
 from carts.models    import Cart
 from products.models import Option, Product
@@ -49,9 +50,6 @@ class CartsView(View):
     def get(self, request):
         user = request.user
 
-        if not Cart.objects.filter(user=user).exists():
-            return JsonResponse({"MESSAGE":"EMPTY_CART"}, status=200)
-
         cart_list = [{
             'id'           : item.id,
             'product_name' : item.product.name,
@@ -61,13 +59,14 @@ class CartsView(View):
             'image_url'    : item.product.thumbnail_image_url,
             'price'        : int(item.option.price) * int(item.quantity)
         } for item in Cart.objects.filter(user=user)]
-        total_price = Cart.objects.filter(user=user).aggregate(total_price=Sum(F('option__price')*F('quantity')))
 
-        shipping_price = 20000
-        if total_price['total_price'] >= 20000 :
-            shipping_price = 0
+        total_price = Cart.objects.filter(user=user).aggregate(total=Sum(F('option__price')*F('quantity')))['total'] or 0
+        free_shipping  = 20000
+        shipping_price = 0 if total_price > free_shipping or not total_price else 2500   
 
-        response = {"Cart" : cart_list, 'shipping' : shipping_price}
-        response.update(total_price)
-        return JsonResponse(response, status=200)
+        return JsonResponse({
+            "Cart"       : cart_list,
+            "shipping"   : shipping_price,
+            "total_price": total_price
+            }, status=200)
 
