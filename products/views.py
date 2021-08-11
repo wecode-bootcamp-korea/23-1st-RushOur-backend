@@ -56,12 +56,13 @@ class ProductView(View):
 
         product      = Product.objects.get(id=product_id)
         product_data = {
-            'id'           : product.id,
+            'product_id'   : product.id,
             'name'         : product.name,
             'thumbnail'    : product.thumbnail_image_url,
             'options'      : [{
-                'size'  : option.size,
-                'price' : option.price
+                'option_id': option.id,
+                'size'     : option.size,
+                'price'    : option.price
             } for option in product.option_set.all()],
             'tags'         : [tag.name for tag in product.tags.all()],
             'detail_img'   : [image.image_url for image in product.productdetailimage_set.all()]
