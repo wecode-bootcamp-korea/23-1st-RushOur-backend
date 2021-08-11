@@ -10,16 +10,12 @@ class CartView(View):
     @login_required
     def patch(self, request, cart_id):
         try:
-            if not Cart.objects.filter(id = cart_id).exists():
+            if not Cart.objects.filter(id = cart_id, user = request.user).exists():
                 return JsonResponse({"message":"INVALID_CART_ID"}, status=404)
  
             data = json.loads(request.body)
-            user = request.user
-            item = Cart.objects.get(id = cart_id)
 
-            if item.user != user:
-                return JsonResponse({"message":"NOT_AUTH_USER"}, status=403)
-
+            item = Cart.objects.get(id = cart_id, user = request.user)
             item.quantity = int(data['quantity'])
             item.save()
             return JsonResponse({
@@ -31,14 +27,10 @@ class CartView(View):
     @login_required
     def delete(self, request, cart_id):
         try:
-            if not Cart.objects.filter(id = cart_id).exists():
+            if not Cart.objects.filter(id = cart_id, user = request.user).exists():
                 return JsonResponse({"message":"INVALID_CART_ID"}, status=404)
 
-            user = request.user    
-            item = Cart.objects.get(id = cart_id)
-            
-            if item.user != user:
-                return JsonResponse({"message":"NOT_AUTH_USER"}, status=403)
+            item = Cart.objects.get(id = cart_id, user = request.user)
 
             item.delete()
             return JsonResponse({"message":"SUCCESS_DELETE"}, status=200)
