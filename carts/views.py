@@ -3,7 +3,6 @@ import json
 from django.views               import View
 from django.http                import JsonResponse
 from django.db.models           import Sum, F
-from django.db.models.functions import Coalesce
 
 from carts.models    import Cart
 from products.models import Option, Product
