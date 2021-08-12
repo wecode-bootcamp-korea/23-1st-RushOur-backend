@@ -93,7 +93,7 @@ class CartsView(View):
             'price'        : int(item.option.price) * int(item.quantity)
         } for item in Cart.objects.filter(user=user)]
 
-        total_price = Cart.objects.filter(user=2).aggregate(total=Coalesce(Sum(F('option__price')*F('quantity')),0, output_field=IntegerField()))['total']
+        total_price = Cart.objects.filter(user=user).aggregate(total=Coalesce(Sum(F('option__price')*F('quantity')),0, output_field=IntegerField()))['total']
 
         shipping_price = 0 if total_price > FREE_SHIPPING or not total_price else 2500   
 
