@@ -9,8 +9,6 @@ from carts.models    import Cart
 from products.models import Option, Product
 from users.utils     import login_required
 
-FREE_SHIPPING  = 20000
-
 class CartView(View):
     @login_required
     def patch(self, request, cart_id):
@@ -81,6 +79,7 @@ class CartsView(View):
     
     @login_required
     def get(self, request):
+        FREE_SHIPPING  = 20000
         user = request.user
 
         cart_list = [{
