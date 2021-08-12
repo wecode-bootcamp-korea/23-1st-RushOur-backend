@@ -16,12 +16,12 @@ class CartView(View):
  
             data = json.loads(request.body)
 
-            item = Cart.objects.get(id = cart_id, user = request.user)
+            item          = Cart.objects.get(id = cart_id, user = request.user)
             item.quantity = int(data['quantity'])
             item.save()
             return JsonResponse({
                 "message"  : "SUCCESS", 
-                "QUANTITY" : item.quantity}, status = 201)
+                "QUANTITY" : item.quantity}, status = 200)
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
 
