@@ -2,11 +2,14 @@ import json
 
 from django.views               import View
 from django.http                import JsonResponse
-from django.db.models           import Sum, F
+from django.db.models           import Sum, F, IntegerField
+from django.db.models.functions import Coalesce
 
 from carts.models    import Cart
 from products.models import Option, Product
 from users.utils     import login_required
+
+FREE_SHIPPING  = 20000
 
 class CartView(View):
     @login_required
@@ -90,9 +93,8 @@ class CartsView(View):
             'price'        : int(item.option.price) * int(item.quantity)
         } for item in Cart.objects.filter(user=user)]
 
-        total_price = Cart.objects.filter(user=user).aggregate(total=Sum(F('option__price')*F('quantity')))['total'] or 0
+        total_price = Cart.objects.filter(user=2).aggregate(total=Coalesce(Sum(F('option__price')*F('quantity')),0, output_field=IntegerField()))['total']
 
-        FREE_SHIPPING  = 20000
         shipping_price = 0 if total_price > FREE_SHIPPING or not total_price else 2500   
 
         return JsonResponse({
