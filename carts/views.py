@@ -60,8 +60,9 @@ class CartsView(View):
         } for item in Cart.objects.filter(user=user)]
 
         total_price = Cart.objects.filter(user=user).aggregate(total=Sum(F('option__price')*F('quantity')))['total'] or 0
-        free_shipping  = 20000
-        shipping_price = 0 if total_price > free_shipping or not total_price else 2500   
+
+        FREE_SHIPPING  = 20000
+        shipping_price = 0 if total_price > FREE_SHIPPING or not total_price else 2500   
 
         return JsonResponse({
             "Cart"       : cart_list,
